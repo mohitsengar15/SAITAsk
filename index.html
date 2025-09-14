@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AskSAIT - SAIT College Assistant</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #0a0a0f;
+            --secondary-bg: #161622;
+            --glass-bg: rgba(22, 22, 34, 0.8);
+            --accent-primary: #8b5cf6;
+            --accent-secondary: #06b6d4;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: rgba(139, 92, 246, 0.2);
+            --glow-primary: rgba(139, 92, 246, 0.4);
+            --glow-secondary: rgba(6, 182, 212, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+            z-index: -2;
+            animation: backgroundFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(1deg); }
+            66% { transform: translate(-20px, 20px) rotate(-1deg); }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: float 6s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.4;
+            }
+            90% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .header {
+            background: rgba(22, 22, 34, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo i {
+            font-size: 2rem;
+            background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: logoGlow 2s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 10px var(--glow-primary));
+        }
+
+        @keyframes logoGlow {
+            0% { filter: drop-shadow(0 0 5px var(--glow-primary)); }
+            100% { filter: drop-shadow(0 0 15px var(--glow-secondary)); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-links a:hover::before {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            gap: 2rem;
+            width: 100%;
+            position: relative;
+        }
+
+        .info-panel {
+            flex: 0 0 350px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .info-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .info-panel::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .info-panel::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 3px;
+        }
+
+        .info-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(6, 182, 212, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .info-panel:hover::before {
+            opacity: 1;
+        }
+
+        .info-panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 30px var(--glow-primary);
+        }
+
+        .chat-container {
+            flex: 1;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 600px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chat-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 40px var(--glow-secondary);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--text-primary);
+            padding: 1.5rem 2rem;
+            border-radius: 24px 24px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: headerShimmer 4s infinite;
+        }
+
+        @keyframes headerShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .chat-status {
+            width: 12px;
+            height: 12px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1; 
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+            }
+            50% { 
+                opacity: 0.7; 
+                transform: scale(1.1);
+                box-shadow: 0 0 25px rgba(0, 255, 136, 0.8);
+            }
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: rgba(10, 10, 15, 0.3);
+            position: relative;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 3px;
+        }
+
+        .message {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 80%;
+            animation: messageSlideIn 0.5s ease-out;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            font-weight: bold;
+            flex-shrink: 0;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .message-avatar:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .message.bot .message-avatar {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            box-shadow: 0 4px 15px var(--glow-primary);
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .message-content {
+            background: rgba(22, 22, 34, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 1.25rem;
+            border-radius: 18px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            line-height: 1.6;
+        }
+
+        .message-content:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--text-primary);
+            box-shadow: 0 4px 20px var(--glow-primary);
+        }
+
+        .message-content ul {
+            margin: 0.5rem 0;
+            padding-left: 1.2rem;
+        }
+
+        .message-content li {
+            margin: 0.3rem 0;
+        }
+
+        .message-content h4 {
+            color: var(--accent-primary);
+            margin: 0.5rem 0;
+        }
+
+        .chat-input-container {
+            padding: 1.5rem;
+            background: rgba(22, 22, 34, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 0 0 24px 24px;
+            border-top: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            resize: none;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-height: 50px;
+            max-height: 120px;
+            background: rgba(10, 10, 15, 0.8);
+            color: var(--text-primary);
+            backdrop-filter: blur(10px);
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 
+                0 0 0 3px rgba(139, 92, 246, 0.2),
+                0 0 20px var(--glow-primary);
+            transform: translateY(-2px);
+        }
+
+        .send-button {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 50%;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .send-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .send-button:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        .send-button:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 8px 25px var(--glow-primary);
+        }
+
+        .send-button:active {
+            transform: scale(0.95) rotate(15deg);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .quick-action {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--accent-primary);
+            border: 1px solid var(--accent-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quick-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .quick-action:hover::before {
+            left: 100%;
+        }
+
+        .quick-action:hover {
+            background: var(--accent-primary);
+            color: var(--text-primary);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px var(--glow-primary);
+        }
+
+        .info-section {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .info-section h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .info-section h3 i {
+            color: var(--accent-primary);
+            transition: transform 0.3s ease;
+        }
+
+        .info-section:hover h3 i {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        .info-list {
+            list-style: none;
+        }
+
+        .info-list li {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-list li:hover {
+            color: var(--text-primary);
+            transform: translateX(10px);
+            border-bottom-color: var(--accent-primary);
+        }
+
+        .info-list li i {
+            color: var(--accent-secondary);
+            width: 16px;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            animation: messageSlideIn 0.5s ease-out;
+        }
+
+        .typing-indicator .message-avatar {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            box-shadow: 0 4px 15px var(--glow-primary);
+        }
+
+        .typing-content {
+            background: rgba(22, 22, 34, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 1.25rem;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .typing-text {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { 
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% { 
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
+            }
+            
+            .info-panel {
+                flex: none;
+                order: 2;
+                max-height: none;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+
+            .chat-container {
+                min-height: 500px;
+            }
+
+            .quick-actions {
+                gap: 0.3rem;
+            }
+
+            .quick-action {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+
+        /* Custom animations for enhanced interactivity */
+        .bounce-in {
+            animation: bounceIn 0.6s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Glowing text effect */
+        .glow-text {
+            background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px var(--glow-primary));
+        }
+
+        /* Enhanced hover effects for better UX */
+        .interactive-element {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .interactive-element:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span class="glow-text">AskSAIT</span>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#home" class="interactive-element">Home</a></li>
+                    <li><a href="#about" class="interactive-element">About</a></li>
+                    <li><a href="#contact" class="interactive-element">Contact</a></li>
+                    <li><a href="#help" class="interactive-element">Help</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="info-panel">
+            <div class="info-section">
+                <h3><i class="fas fa-robot"></i> About AskSAIT</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">
+                    I'm your AI assistant for St. Aloysius Institute of Technology, established in 2009. AICTE approved and RGPV affiliated, providing comprehensive information about courses, admissions, and facilities.
+                </p>
+            </div>
+
+            <div class="info-section">
+                <h3><i class="fas fa-info-circle"></i> College Overview</h3>
+                <ul class="info-list">
+                    <li><i class="fas fa-calendar"></i> Established: 2009</li>
+                    <li><i class="fas fa-check-circle"></i> AICTE Approved</li>
+                    <li><i class="fas fa-university"></i> RGPV Bhopal Affiliated</li>
+                    <li><i class="fas fa-cross"></i> Catholic Diocese of Jabalpur</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Jabalpur, Madhya Pradesh</li>
+                    <li><i class="fas fa-trophy"></i> Motto: Virtus in Arduo</li>
+                </ul>
+            </div>
+
+            <div class="info-section">
+                <h3><i class="fas fa-graduation-cap"></i> Programs Offered</h3>
+                <ul class="info-list">
+                    <li><i class="fas fa-laptop-code"></i> Computer Science Engineering</li>
+                    <li><i class="fas fa-microchip"></i> Electronics & Communication</li>
+                    <li><i class="fas fa-bolt"></i> Electronics & Electrical</li>
+                    <li><i class="fas fa-cogs"></i> Mechanical Engineering</li>
+                    <li><i class="fas fa-road"></i> Civil Engineering</li>
+                    <li><i class="fas fa-chalkboard-teacher"></i> B.Ed Program</li>
+                </ul>
+            </div>
+
+            <div class="info-section">
+                <h3><i class="fas fa-users"></i> Leadership</h3>
+                <ul class="info-list">
+                    <li><i class="fas fa-user-tie"></i> Director: Dr. Fr. Davis George</li>
+                    <li><i class="fas fa-user-graduate"></i> Administrator: Fr. Ben Anton Rose</li>
+                    <li><i class="fas fa-user-check"></i> Principal: Dr. Renu Pandey</li>
+                </ul>
+            </div>
+
+            <div class="info-section">
+                <h3><i class="fas fa-star"></i> Key Highlights</h3>
+                <ul class="info-list">
+                    <li><i class="fas fa-percentage"></i> Avg Fee: ₹48,100 per year</li>
+                    <li><i class="fas fa-trophy"></i> 13 Courses across 3 Streams</li>
+                    <li><i class="fas fa-building"></i> Modern Infrastructure</li>
+                    <li><i class="fas fa-wifi"></i> ICT-Based Learning</li>
+                </ul>
+            </div>
+
+            <div class="info-section">
+                <h3><i class="fas fa-clock"></i> Response Time</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    <span style="color: #00ff88; font-weight: 600;">●</span> Online 24/7 - Instant responses
+                </p>
+            </div>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-status"></div>
+                <div>
+                    <h2 style="margin: 0; font-size: 1.2rem;">SAIT College Assistant</h2>
+                    <p style="margin: 0; opacity: 0.9; font-size: 0.9rem;">Ask me anything about St. Aloysius Institute of Technology!</p>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot bounce-in">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <p>Hello! Welcome to St. Aloysius Institute of Technology, Jabalpur. I'm <span class="glow-text">AskSAIT</span>, your intelligent assistant.</p>
+                        <p style="margin-top: 0.5rem;"><strong>About SAIT:</strong></p>
+                        <ul style="margin: 0.5rem 0 0 1rem;">
+                            <li>Established: 2009</li>
+                            <li>AICTE Approved & RGPV Affiliated</li>
+                            <li>Catholic Diocese of Jabalpur</li>
+                            <li>Located in Jabalpur, Madhya Pradesh</li>
+                            <li>Motto: "Virtus in Arduo" (Strength through Striving)</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem;">I can help you with admissions, courses, fees, placements, faculty info, and much more. What would you like to know?</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="typing-content">
+                    <span class="typing-text">AskSAIT is thinking</span>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="quick-actions">
+                    <div class="quick-action interactive-element" onclick="sendQuickMessage('What are the admission requirements?')">
+                        <i class="fas fa-graduation-cap"></i> Admission Requirements
+                    </div>
+                    <div class="quick-action interactive-element" onclick="sendQuickMessage('Tell me about available courses and fees')">
+                        <i class="fas fa-book"></i> Courses & Fees
+                    </div>
+                    <div class="quick-action interactive-element" onclick="sendQuickMessage('Campus facilities and infrastructure')">
+                        <i class="fas fa-building"></i> Campus Facilities
+                    </div>
+                    <div class="quick-action interactive-element" onclick="sendQuickMessage('Placement statistics and companies')">
+                        <i class="fas fa-briefcase"></i> Placement Details
+                    </div>
+                    <div class="quick-action interactive-element" onclick="sendQuickMessage('Faculty information and leadership')">
+                        <i class="fas fa-chalkboard-teacher"></i> Faculty & Leadership
+                    </div>
+                    <div class="quick-action interactive-element" onclick="sendQuickMessage('Student life and activities')">
+                        <i class="fas fa-users"></i> Student Life
+                    </div>
+                </div>
+                
+                <div class="chat-input-wrapper">
+                    <textarea 
+                        id="chatInput" 
+                        class="chat-input" 
+                        placeholder="Ask me anything about SAIT... (e.g., 'What are the admission deadlines?', 'Tell me about CSE course')"
+                        rows="1"
+                    ></textarea>
+                    <button id="sendButton" class="send-button" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Updated SAIT College Data with accurate information from official sources
+        const saitData = {
+            college: {
+                name: "St. Aloysius Institute of Technology",
+                shortName: "SAIT", 
+                established: "2009",
+                location: "Near Ekta Market, Gauraiya Ghat, Jabalpur, Madhya Pradesh - 482020",
+                affiliation: "Rajiv Gandhi Proudyogiki Vishwavidyalaya (RGPV), Bhopal",
+                approval: "AICTE (All India Council for Technical Education)",
+                ownership: "Catholic Diocese of Jabalpur",
+                motto: "Virtus in Arduo (Strength through Striving)",
+                type: "Christian Minority Institution",
+                patronSaint: "St. Aloysius Gonzaga",
+                vision: "St. Aloysius Institute of Technology strives for quality in academics, character formation and developing a scientific temper thereby, opening new avenues for enriching life.",
+                mission: "We aim to create and facilitate an environment for knowledge, research, skill, self-reliance and humanitarianism that moulds the youth to build up a better world.",
+                totalCourses: "13 Courses across 3 Streams",
+                averageFee: "₹48,100 per year"
+            },
+
+            leadership: {
+                director: "Dr. Fr. Davis George",
+                administrator: "Fr. Ben Anton Rose",
+                principal: "Dr. Renu Pandey"
+            },
+
+            courses: {
+                engineering: [
+                    {
+                        name: "Computer Science & Engineering",
+                        code: "CSE",
+                        duration: "4 years",
+                        intake: 120,
+                        fees: "₹45,000 - ₹52,000 per year",
+                        description: "Comprehensive program covering programming, software development, algorithms, data structures, AI/ML, database systems, and emerging technologies.",
+                        careerProspects: "Software Developer, Data Scientist, System Analyst, Web Developer, Mobile App Developer"
+                    },
+                    {
+                        name: "Electronics & Communication Engineering", 
+                        code: "ECE",
+                        duration: "4 years",
+                        intake: 60,
+                        fees: "₹45,000 - ₹50,000 per year",
+                        description: "Focus on analog/digital electronics, communication systems, signal processing, microprocessors, VLSI design, and telecommunications.",
+                        careerProspects: "Electronics Engineer, Communication Engineer, VLSI Designer, Network Engineer"
+                    },
+                    {
+                        name: "Electronics & Electrical Engineering",
+                        code: "EEE", 
+                        duration: "4 years",
+                        intake: 60,
+                        fees: "₹45,000 - ₹50,000 per year",
+                        description: "Combination of electronics and electrical systems, power electronics, control systems, and electrical machines.",
+                        careerProspects: "Power Systems Engineer, Control Systems Engineer, Electronics Design Engineer"
+                    },
+                    {
+                        name: "Mechanical Engineering",
+                        code: "ME",
+                        duration: "4 years", 
+                        intake: 60,
+                        fees: "₹42,000 - ₹48,000 per year",
+                        description: "Covers thermal engineering, manufacturing processes, machine design, CAD/CAM, robotics, and mechanical systems.",
+                        careerProspects: "Design Engineer, Production Engineer, Quality Control Engineer, Maintenance Engineer"
+                    },
+                    {
+                        name: "Civil Engineering",
+                        code: "CE",
+                        duration: "4 years",
+                        intake: 60, 
+                        fees: "₹40,000 - ₹45,000 per year",
+                        description: "Structural engineering, construction management, environmental engineering, transportation, and infrastructure development.",
+                        careerProspects: "Structural Engineer, Construction Manager, Urban Planner, Environmental Engineer"
+                    }
+                ],
+                other: [
+                    {
+                        name: "Bachelor of Education (B.Ed)",
+                        duration: "2 years",
+                        affiliation: "Rani Durgavati Vishwavidyalaya, Jabalpur",
+                        recognition: "NCTE Recognized", 
+                        fees: "₹25,000 - ₹30,000 per year",
+                        description: "Teacher education program for aspiring educators in Arts, Science, Commerce, Management fields."
+                    }
+                ]
+            },
+
+            contact: {
+                phone: ["9827445951", "9131991130"],
+                email: "saitjbp@gmail.com",
+                website: "https://saitjbp.in/",
+                address: "Near Ekta Market, Gauraiya Ghat, Jabalpur, Madhya Pradesh - 482020",
+                admissionCell: "saitjbp@gmail.com"
+            },
+
+            admissions: {
+                eligibility: {
+                    engineering: "10+2 with Physics, Chemistry, Mathematics (PCM) with minimum 45% marks (40% for SC/ST)",
+                    bed: "Graduation in any discipline with minimum 50% marks"
+                },
+                process: [
+                    "Online application through official website or direct campus visit",
+                    "Merit-based selection (JEE Main scores preferred for engineering)",
+                    "Document verification and counseling", 
+                    "Fee payment and admission confirmation",
+                    "Orientation and class commencement"
+                ],
+                documents: [
+                    "10th & 12th mark sheets and certificates",
+                    "JEE Main scorecard (if available)", 
+                    "Transfer certificate and migration certificate",
+                    "Caste certificate (if applicable)",
+                    "Domicile certificate", 
+                    "Passport size photographs",
+                    "Aadhar card copy",
+                    "Income certificate (for scholarship)"
+                ],
+                timeline: "Applications typically open in May-June, admissions continue till August based on seat availability"
+            },
+
+            facilities: [
+                {
+                    name: "Modern Library",
+                    description: "Well-equipped library with extensive collection of books, journals, digital resources, and high-speed internet facility for research and study."
+                },
+                {
+                    name: "Advanced Laboratories",
+                    description: "State-of-the-art laboratories for all engineering departments with modern equipment, software, and instrumentation."
+                },
+                {
+                    name: "Computer Centers", 
+                    description: "Multiple computer labs with latest hardware, licensed software, programming environments, and networking facilities."
+                },
+                {
+                    name: "Workshop & Manufacturing Units",
+                    description: "Fully equipped mechanical, electrical, and electronics workshops for hands-on practical training and project development."
+                },
+                {
+                    name: "Sports Complex",
+                    description: "Comprehensive sports facilities including indoor and outdoor games - cricket, football, basketball, badminton, volleyball, and athletics."
+                },
+                {
+                    name: "Hostel Accommodation",
+                    description: "Separate hostels for boys and girls with mess facilities, study rooms, recreation areas, and 24/7 security."
+                },
+                {
+                    name: "Transportation",
+                    description: "College bus services covering major routes in Jabalpur city and surrounding areas for student convenience."
+                },
+                {
+                    name: "Cafeteria & Dining",
+                    description: "On-campus cafeteria providing nutritious meals, snacks, and beverages with hygienic food preparation."
+                },
+                {
+                    name: "ICT Infrastructure", 
+                    description: "Wi-Fi enabled campus, smart classrooms, audio-visual aids, and digital learning platforms for enhanced education."
+                },
+                {
+                    name: "Medical Facility",
+                    description: "Campus health center with qualified medical staff, first aid facilities, and tie-ups with nearby hospitals."
+                }
+            ],
+
+            faq: [
+                {
+                    question: "What is Saint Aloysius Institute of Technology (SAIT), Jabalpur?",
+                    answer: "SAIT is a Christian College owned and established by the Catholic Diocese of Jabalpur, belonging to the minority community of Catholics. It is AICTE approved and affiliated to RGPV Bhopal, offering various engineering and B.Ed programs since 2009."
+                },
+                {
+                    question: "Where is SAIT Jabalpur located?",
+                    answer: "SAIT is located at Near Ekta Market, Gauraiya Ghat, Jabalpur, Madhya Pradesh - 482020."
+                },
+                {
+                    question: "When was SAIT Jabalpur established?",
+                    answer: "St Aloysius Institute of Technology, Jabalpur was established in the year 2009."
+                },
+                {
+                    question: "Who is the Principal of SAIT Jabalpur?",
+                    answer: "Dr. Renu Pandey is the current Principal of SAIT Jabalpur."
+                },
+                {
+                    question: "Who is the Director of SAIT Jabalpur?",
+                    answer: "Dr. Fr. Davis George is the Director of SAIT Jabalpur."
+                },
+                {
+                    question: "What is the official website of SAIT Jabalpur?",
+                    answer: "The official website of SAIT Jabalpur is https://saitjbp.in/"
+                },
+                {
+                    question: "What is the contact number of SAIT Jabalpur?",
+                    answer: "You can contact SAIT Jabalpur at 9827445951 or 9131991130 for admission enquiries and general information."
+                },
+                {
+                    question: "What is the email address for admissions?",
+                    answer: "For admission enquiries, you can email at saitjbp@gmail.com"
+                },
+                {
+                    question: "What is the vision of SAIT Jabalpur?",
+                    answer: "SAIT's vision is to strive for quality in academics, character formation and developing a scientific temper thereby, opening new avenues for enriching life."
+                },
+                {
+                    question: "What is the mission of SAIT Jabalpur?",
+                    answer: "SAIT's mission is to create and facilitate an environment for knowledge, research, skill, self-reliance and humanitarianism that moulds the youth to build up a better world."
+                }
+            ],
+
+            studentLife: {
+                activities: [
+                    "Annual technical festival and inter-college competitions",
+                    "Cultural events and talent showcase programs",
+                    "Sports tournaments and athletic competitions",
+                    "Industrial visits and educational tours",
+                    "Guest lectures by industry experts and academicians", 
+                    "Student clubs and technical societies",
+                    "Community service and NSS activities",
+                    "Project exhibitions and innovation showcases",
+                    "Cultural diversity celebrations and festivals"
+                ],
+                clubs: [
+                    "Technical Innovation Club",
+                    "Cultural and Arts Society",
+                    "Sports and Adventure Club", 
+                    "Literary and Debating Society",
+                    "Photography and Media Club",
+                    "Music and Dance Troupe",
+                    "Social Service Club (NSS)",
+                    "Entrepreneurship Development Cell"
+                ]
+            }
+        };
+
+        // Initialize chat functionality
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendButton');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        // Enhanced AI Response System with accurate SAIT data
+        class SAITChatbot {
+            constructor() {
+                this.responses = new Map();
+                this.initializeResponses();
+            }
+
+            initializeResponses() {
+                // FAQ responses
+                this.responses.set(['what is sait', 'about sait', 'saint aloysius', 'college information'], () => {
+                    return `<strong>What is Saint Aloysius Institute of Technology (SAIT), Jabalpur?</strong><br><br>
+                    SAIT is a Christian College owned and established by the Catholic Diocese of Jabalpur, belonging to the minority community of Catholics and is administered through The Diocesan Corporation of Jabalpur.<br><br>
+                    <h4>Key Details:</h4>
+                    <ul>
+                        <li><strong>Established:</strong> ${saitData.college.established}</li>
+                        <li><strong>Approval:</strong> ${saitData.college.approval}</li>
+                        <li><strong>Affiliation:</strong> ${saitData.college.affiliation}</li>
+                        <li><strong>Type:</strong> ${saitData.college.type}</li>
+                        <li><strong>Ownership:</strong> ${saitData.college.ownership}</li>
+                        <li><strong>Motto:</strong> "${saitData.college.motto}"</li>
+                    </ul>`;
+                });
+
+                // Location and establishment
+                this.responses.set(['location', 'address', 'where is sait', 'established when'], () => {
+                    return `<strong>SAIT Location & Establishment Details:</strong><br><br>
+                    <h4>Location:</h4>
+                    <p>${saitData.contact.address}</p>
+                    
+                    <h4>Establishment:</h4>
+                    <p>St Aloysius Institute of Technology, Jabalpur was established in the year <strong>${saitData.college.established}</strong>.</p>
+                    
+                    <h4>How to Reach:</h4>
+                    <ul>
+                        <li><strong>By Train:</strong> Jabalpur Railway Station - 8 km from campus</li>
+                        <li><strong>By Air:</strong> Jabalpur Airport (Dumna Airport) - 15 km from campus</li>
+                        <li><strong>By Road:</strong> Well connected via NH30 and state highways</li>
+                        <li><strong>Local Transport:</strong> Auto-rickshaw, taxi, and city buses</li>
+                    </ul>`;
+                });
+
+                // Leadership information
+                this.responses.set(['director', 'principal', 'leadership', 'administration', 'who is director', 'who is principal'], () => {
+                    return `<strong>SAIT Leadership & Administration:</strong><br><br>
+                    <h4>Key Leadership:</h4>
+                    <ul>
+                        <li><strong>Director:</strong> ${saitData.leadership.director}</li>
+                        <li><strong>Principal:</strong> ${saitData.leadership.principal}</li>
+                        <li><strong>Administrator:</strong> ${saitData.leadership.administrator}</li>
+                    </ul>
+                    
+                    <p>The Institute works under the able guidance of Dr Fr Davis George, Director, who leads the institution towards academic excellence and holistic development of students.</p>`;
+                });
+
+                // Contact information
+                this.responses.set(['contact', 'phone', 'email', 'website'], () => {
+                    return `<strong>Contact Information:</strong><br><br>
+                    <h4>Official Contact Details:</h4>
+                    <ul>
+                        <li><strong>Phone:</strong> ${saitData.contact.phone.join(', ')}</li>
+                        <li><strong>Email:</strong> ${saitData.contact.email}</li>
+                        <li><strong>Website:</strong> <a href="${saitData.contact.website}" target="_blank">${saitData.contact.website}</a></li>
+                        <li><strong>Address:</strong> ${saitData.contact.address}</li>
+                    </ul>
+                    
+                    <h4>For Admission Enquiries:</h4>
+                    <p>Contact us at <strong>${saitData.contact.phone.join(' or ')}</strong> or email at <strong>${saitData.contact.admissionCell}</strong></p>`;
+                });
+
+                // Vision and Mission
+                this.responses.set(['vision', 'mission', 'motto'], () => {
+                    return `<strong>SAIT Vision, Mission & Motto:</strong><br><br>
+                    <h4>Vision:</h4>
+                    <p>${saitData.college.vision}</p>
+                    
+                    <h4>Mission:</h4>
+                    <p>${saitData.college.mission}</p>
+                    
+                    <h4>Motto:</h4>
+                    <p><strong>"${saitData.college.motto}"</strong></p>
+                    
+                    <p>SAIT is committed to providing quality education that combines academic excellence with character formation and practical skills development.</p>`;
+                });
+
+                // Courses and Programs
+                this.responses.set(['courses', 'programs', 'branches', 'engineering', 'bed'], () => {
+                    return `<strong>SAIT Academic Programs:</strong><br><br>
+                    <h4>Engineering Programs (B.E./B.Tech):</h4>
+                    <ul>
+                        ${saitData.courses.engineering.map(course => 
+                            `<li><strong>${course.name} (${course.code})</strong><br>
+                            Duration: ${course.duration} | Intake: ${course.intake}<br>
+                            Fees: ${course.fees}</li>`
+                        ).join('<br>')}
+                    </ul>
+                    
+                    <h4>Other Programs:</h4>
+                    <ul>
+                        <li><strong>${saitData.courses.other[0].name}</strong><br>
+                        Duration: ${saitData.courses.other[0].duration}<br>
+                        Fees: ${saitData.courses.other[0].fees}</li>
+                    </ul>
+                    
+                    <p><strong>Total:</strong> ${saitData.college.totalCourses} | <strong>Average Fee:</strong> ${saitData.college.averageFee}</p>`;
+                });
+
+                // Fees information
+                this.responses.set(['fees', 'fee structure', 'cost'], () => {
+                    return `<strong>SAIT Fee Structure:</strong><br><br>
+                    <h4>Engineering Programs (Annual):</h4>
+                    <ul>
+                        ${saitData.courses.engineering.map(course => 
+                            `<li>${course.name}: ${course.fees}</li>`
+                        ).join('')}
+                    </ul>
+                    
+                    <h4>B.Ed Program:</h4>
+                    <ul>
+                        <li>Bachelor of Education: ${saitData.courses.other[0].fees}</li>
+                    </ul>
+                    
+                    <h4>Additional Information:</h4>
+                    <ul>
+                        <li>Average fee across all programs: ${saitData.college.averageFee}</li>
+                        <li>Payment plans and scholarship options available</li>
+                        <li>Additional charges for hostel and mess facilities</li>
+                        <li>Contact for detailed fee structure: ${saitData.contact.phone.join(' or ')}</li>
+                    </ul>`;
+                });
+
+                // Admissions
+                this.responses.set(['admission', 'admissions', 'eligibility', 'how to apply'], () => {
+                    return `<strong>SAIT Admission Information:</strong><br><br>
+                    <h4>Eligibility Criteria:</h4>
+                    <ul>
+                        <li><strong>Engineering:</strong> ${saitData.admissions.eligibility.engineering}</li>
+                        <li><strong>B.Ed:</strong> ${saitData.admissions.eligibility.bed}</li>
+                    </ul>
+                    
+                    <h4>Application Process:</h4>
+                    <ul>
+                        ${saitData.admissions.process.map(step => `<li>${step}</li>`).join('')}
+                    </ul>
+                    
+                    <h4>Timeline:</h4>
+                    <p>${saitData.admissions.timeline}</p>
+                    
+                    <h4>Contact for Admissions:</h4>
+                    <p>Phone: ${saitData.contact.phone.join(', ')}<br>
+                    Email: ${saitData.contact.admissionCell}</p>`;
+                });
+
+                // Facilities
+                this.responses.set(['facilities', 'infrastructure', 'campus'], () => {
+                    return `<strong>SAIT Campus Facilities:</strong><br><br>
+                    <h4>Key Infrastructure:</h4>
+                    <ul>
+                        ${saitData.facilities.slice(0, 5).map(facility => 
+                            `<li><strong>${facility.name}:</strong> ${facility.description}</li>`
+                        ).join('')}
+                    </ul>
+                    
+                    <h4>Additional Amenities:</h4>
+                    <ul>
+                        ${saitData.facilities.slice(5).map(facility => 
+                            `<li><strong>${facility.name}:</strong> ${facility.description}</li>`
+                        ).join('')}
+                    </ul>`;
+                });
+            }
+
+            generateResponse(userInput) {
+                const input = userInput.toLowerCase();
+                
+                // Check FAQ first
+                for (let faq of saitData.faq) {
+                    if (input.includes(faq.question.toLowerCase().substring(0, 15))) {
+                        return `<strong>${faq.question}</strong><br><br>${faq.answer}`;
+                    }
+                }
+                
+                // Check for matches in response map
+                for (let [keywords, responseGenerator] of this.responses) {
+                    if (keywords.some(keyword => input.includes(keyword))) {
+                        return responseGenerator();
+                    }
+                }
+
+                // Handle greetings
+                if (input.includes('hello') || input.includes('hi') || input.includes('namaste')) {
+                    return `Hello! Welcome to St. Aloysius Institute of Technology! How can I help you learn more about SAIT today?`;
+                }
+
+                // Handle thanks
+                if (input.includes('thank')) {
+                    return `You're welcome! Feel free to ask any questions about SAIT - our programs, admissions, facilities, or anything else.`;
+                }
+
+                // Default response
+                return `I'd be happy to help you with information about St. Aloysius Institute of Technology!<br><br>
+                <h4>You can ask me about:</h4>
+                <ul>
+                    <li>College information and history</li>
+                    <li>Courses and programs offered</li>
+                    <li>Admission requirements and process</li>
+                    <li>Fee structure and costs</li>
+                    <li>Campus facilities and infrastructure</li>
+                    <li>Contact information and location</li>
+                    <li>Leadership and administration</li>
+                    <li>Vision, mission, and values</li>
+                </ul>
+                <p>What would you like to know about SAIT?</p>`;
+            }
+        }
+
+        const chatbot = new SAITChatbot();
+
+        function autoResizeTextarea() {
+            chatInput.style.height = 'auto';
+            chatInput.style.height = chatInput.scrollHeight + 'px';
+        }
+
+        chatInput.addEventListener('input', autoResizeTextarea);
+
+        function appendMessage(sender, text) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender, 'bounce-in');
+            
+            const avatarElement = document.createElement('div');
+            avatarElement.classList.add('message-avatar');
+            avatarElement.innerHTML = sender === 'bot' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
+
+            const contentElement = document.createElement('div');
+            contentElement.classList.add('message-content');
+            contentElement.innerHTML = text;
+
+            messageElement.appendChild(avatarElement);
+            messageElement.appendChild(contentElement);
+            chatMessages.appendChild(messageElement);
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const userInput = chatInput.value.trim();
+            if (userInput === '') return;
+
+            appendMessage('user', userInput);
+            chatInput.value = '';
+            autoResizeTextarea();
+
+            typingIndicator.style.display = 'flex';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simulate AI thinking time
+            await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 1000));
+
+            const botResponse = chatbot.generateResponse(userInput);
+            
+            typingIndicator.style.display = 'none';
+            appendMessage('bot', botResponse);
+        }
+
+        function sendQuickMessage(message) {
+            chatInput.value = message;
+            autoResizeTextarea();
+            sendMessage();
+        }
+
+        // Send message on Enter key press
+        chatInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Initialize on page load
+        window.onload = () => {
+            createParticles();
+            autoResizeTextarea();
+        };
+    </script>
+</body>
+</html>
